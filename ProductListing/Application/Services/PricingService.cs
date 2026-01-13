@@ -15,5 +15,15 @@ namespace ProductListing.Application.Services
         {
             return (popularityScore + 1) * weight * goldPrice;
         }
+
+        public decimal ConvertPopularityToFiveScale(decimal popularityScore)
+        {
+            return Math.Round(popularityScore * 5, 1);
+        }
+
+        public decimal RoundPrice(decimal price)
+        {
+            return Math.Round(price, 2);
+        }
     }
 }

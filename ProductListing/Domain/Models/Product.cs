@@ -2,10 +2,10 @@
 {
     public class Product
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public decimal PopularityScore { get; set; }
         public decimal Weight { get; set; }
-        public ProductImage Images { get; set; }
+        public ProductImage? Images { get; set; }
         public decimal Price { get; set; }
     }
 
