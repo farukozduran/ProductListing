@@ -1,5 +1,6 @@
 using ProductListing.Application.Interfaces;
 using ProductListing.Application.Services;
+using ProductListing.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
