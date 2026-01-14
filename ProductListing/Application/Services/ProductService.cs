@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using ProductListing.Application.DTOs;
 using ProductListing.Application.Interfaces;
+using ProductListing.Application.Mappings;
 using ProductListing.Domain.Models;
 
 namespace ProductListing.Application.Services
@@ -15,7 +17,7 @@ namespace ProductListing.Application.Services
             _env = env;
         }
 
-        public async Task<IReadOnlyList<Product>> GetProductsAsync() 
+        public async Task<IReadOnlyList<ProductDto>> GetProductsAsync() 
         {
             var filePath = Path.Combine(_env.ContentRootPath, "Data", "products.json");
 
@@ -38,7 +40,9 @@ namespace ProductListing.Application.Services
                     goldPrice);
             }
 
-            return products;
+            return products
+                .Select(p => ProductMapper.ToDto(p, _pricingService))
+                .ToList();
             
         }
     }
