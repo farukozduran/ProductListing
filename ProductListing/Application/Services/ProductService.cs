@@ -17,7 +17,10 @@ namespace ProductListing.Application.Services
             _env = env;
         }
 
-        public async Task<IReadOnlyList<ProductDto>> GetProductsAsync() 
+        public async Task<IReadOnlyList<ProductDto>> GetProductsAsync(
+            decimal? minPrice,
+            decimal? maxPrice,
+            decimal? minPopularity) 
         {
             var filePath = Path.Combine(_env.ContentRootPath, "Data", "products.json");
 
@@ -27,8 +30,8 @@ namespace ProductListing.Application.Services
             }
 
             var json = await File.ReadAllTextAsync(filePath);
-
-            var products = JsonConvert.DeserializeObject<List<Product>>(json) ?? new List<Product>();
+            var products = JsonConvert.DeserializeObject<List<Product>>(json) 
+                ?? new List<Product>();
 
             var goldPrice = await _pricingService.GetGoldPriceAsync();
 
@@ -38,6 +41,31 @@ namespace ProductListing.Application.Services
                     product.PopularityScore,
                     product.Weight,
                     goldPrice);
+            }
+
+            // FILTERING ON DOMAIN
+
+            if (minPrice.HasValue)
+            {
+                products = products
+                    .Where(p => p.Price >= minPrice.Value)
+                    .ToList();
+            }
+
+            if (maxPrice.HasValue)
+            {
+                products = products
+                    .Where(p => p.Price <= maxPrice.Value)
+                    .ToList();
+            }
+
+            if (minPopularity.HasValue)
+            {
+                products = products
+                    .Where(p =>
+                        _pricingService.ConvertPopularityToFiveScale(p.PopularityScore)
+                        >= minPopularity.Value)
+                    .ToList();
             }
 
             return products

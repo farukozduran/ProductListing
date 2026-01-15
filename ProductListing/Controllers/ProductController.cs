@@ -15,9 +15,16 @@ namespace ProductListing.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(
+            [FromQuery] decimal? minPrice,
+            [FromQuery] decimal? maxPrice,
+            [FromQuery] decimal? minPopularity)
         {
-            var products = await _productService.GetProductsAsync();
+            var products = await _productService.GetProductsAsync(
+                minPrice,
+                maxPrice,
+                minPopularity);
+
             return Ok(products);
         }
     }

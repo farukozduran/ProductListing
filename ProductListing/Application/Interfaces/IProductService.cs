@@ -4,6 +4,9 @@ namespace ProductListing.Application.Interfaces
 {
     public interface IProductService
     {
-        public Task<IReadOnlyList<ProductDto>> GetProductsAsync();
+        public Task<IReadOnlyList<ProductDto>> GetProductsAsync(
+            decimal? minPrice,
+            decimal? maxPrice,
+            decimal? minPopularity);
     }
 }
