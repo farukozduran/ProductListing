@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using ProductListing.Application.Common.Responses;
+using System.Net;
 using System.Text.Json;
 namespace ProductListing.Middleware
 {
@@ -19,36 +20,31 @@ namespace ProductListing.Middleware
             {
                 await _next(context);
             }
-            catch(FileNotFoundException ex)
-            {
-                await HandleException(context, ex, HttpStatusCode.NotFound);
-            }
             catch(Exception ex)
             {
-                await HandleException(context, ex, HttpStatusCode.InternalServerError);
+                _logger.LogError(ex, ex.Message);
+                await HandleExceptionAsync(context, ex);
             }
         }
 
-        private async Task HandleException(
-            HttpContext context, 
-            Exception exception, 
-            HttpStatusCode statusCode)
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            _logger.LogError(exception, exception.Message);
-
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)statusCode;
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var response = new
+            var response = ApiResponse<object>.Fail(
+                code: "SERVER_ERROR",
+                message: "An unexpected error occured."
+            );
+
+            var options = new JsonSerializerOptions
             {
-                statusCode = context.Response.StatusCode,
-                message = exception.Message,
-                path = context.Request.Path,
-                timestamp = DateTime.UtcNow
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            await context.Response.WriteAsync(
-                JsonSerializer.Serialize(response));
+            var json = JsonSerializer.Serialize(response, options);
+
+            return context.Response.WriteAsync(json);
         }
     }
 }
