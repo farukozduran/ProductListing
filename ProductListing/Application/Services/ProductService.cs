@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using ProductListing.Application.DTOs;
 using ProductListing.Application.Interfaces;
-using ProductListing.Application.Mappings;
 using ProductListing.Domain.Models;
 
 namespace ProductListing.Application.Services
@@ -17,7 +15,7 @@ namespace ProductListing.Application.Services
             _env = env;
         }
 
-        public async Task<IReadOnlyList<ProductDto>> GetProductsAsync(
+        public async Task<IReadOnlyList<Product>> GetProductsAsync(
             decimal? minPrice,
             decimal? maxPrice,
             decimal? minPopularity) 
@@ -68,10 +66,7 @@ namespace ProductListing.Application.Services
                     .ToList();
             }
 
-            return products
-                .Select(p => ProductMapper.ToDto(p, _pricingService))
-                .ToList();
-            
+            return products;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductListing.Application.Common.Responses;
+using ProductListing.Application.DTOs;
 using ProductListing.Application.Interfaces;
+using ProductListing.Application.Mappings;
 
 namespace ProductListing.Controllers
 {
@@ -9,10 +11,12 @@ namespace ProductListing.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IPricingService _pricingService;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, IPricingService pricingService)
         {
             _productService = productService;
+            _pricingService = pricingService;
         }
 
         [HttpGet]
@@ -26,7 +30,11 @@ namespace ProductListing.Controllers
                 maxPrice,
                 minPopularity);
 
-            return Ok(ApiResponse<object>.SuccessResponse(products));
+            var result = products
+                .Select(p => ProductMapper.ToDto(p, _pricingService))
+                .ToList();
+
+            return Ok(ApiResponse<List<ProductDto>>.SuccessResponse(result));
         }
     }
 }

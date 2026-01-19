@@ -1,10 +1,10 @@
-﻿using ProductListing.Application.DTOs;
+﻿using ProductListing.Domain.Models;
 
 namespace ProductListing.Application.Interfaces
 {
     public interface IProductService
     {
-        public Task<IReadOnlyList<ProductDto>> GetProductsAsync(
+        public Task<IReadOnlyList<Product>> GetProductsAsync(
             decimal? minPrice,
             decimal? maxPrice,
             decimal? minPopularity);
