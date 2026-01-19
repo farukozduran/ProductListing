@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProductListing.Application.Common.Responses;
 using ProductListing.Application.Interfaces;
 
 namespace ProductListing.Controllers
@@ -25,7 +26,7 @@ namespace ProductListing.Controllers
                 maxPrice,
                 minPopularity);
 
-            return Ok(products);
+            return Ok(ApiResponse<object>.SuccessResponse(products));
         }
     }
 }
